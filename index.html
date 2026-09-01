@@ -460,8 +460,7 @@ body.night .v.hl-lilac{background:rgba(211,193,232,.22)}
 
 <div id="toast"></div>
 
-<!-- ====== sql.js para leer .bblx en el navegador ====== -->
-<script src="libs/sql-wasm.js"></script>
+<!-- sql.js se carga dinámicamente (con respaldo de rutas) desde ensureSQL() -->
 
 <script>
 /* ======================= parser.js (embebido) ======================= */
@@ -987,11 +986,27 @@ function importStudy(file){
 }
 
 /* ======================= Importar .bblx ======================= */
-var SQL=null;
+var SQL=null, SQLBASE='';
+function loadScriptWithFallback(paths){
+  return new Promise(function(res,rej){
+    var i=0;
+    (function next(){
+      if(i>=paths.length){rej(new Error('sql-wasm.js no se encontró (ni en libs/ ni en la raíz)'));return;}
+      var p=paths[i++];
+      var s=document.createElement('script'); s.src=p;
+      s.onload=function(){ SQLBASE=(p.indexOf('libs/')===0)?'libs/':''; res(); };
+      s.onerror=function(){ next(); };
+      document.head.appendChild(s);
+    })();
+  });
+}
 function ensureSQL(){
   if(SQL)return Promise.resolve(SQL);
-  if(typeof initSqlJs==='undefined')return Promise.reject(new Error('sql-wasm.js no cargó'));
-  return initSqlJs({locateFile:function(f){return 'libs/'+f;}}).then(function(s){SQL=s;return s;});
+  var pre=(typeof initSqlJs!=='undefined')?Promise.resolve():loadScriptWithFallback(['libs/sql-wasm.js','sql-wasm.js']);
+  return pre.then(function(){
+    if(typeof initSqlJs==='undefined')throw new Error('initSqlJs no disponible');
+    return initSqlJs({locateFile:function(f){return SQLBASE+f;}}).then(function(s){SQL=s;return s;});
+  });
 }
 function importBblx(file){
   var msg=$('#verMsg'); msg.textContent='Leyendo '+file.name+'…';
@@ -1034,7 +1049,8 @@ function importBblx(file){
     };
     fr.readAsArrayBuffer(file);
   }).catch(function(err){
-    $('#verMsg').innerHTML='<span style="color:var(--rubric)">Motor SQLite no disponible ('+escAttr(err.message)+'). En GitHub Pages funciona; en local abre con un servidor.</span>';
+    var b=location.href.replace(/[^/]*$/,'');
+    $('#verMsg').innerHTML='<span style="color:var(--rubric)">Motor SQLite no disponible ('+escAttr(err.message)+').<br>Busqué <b>sql-wasm.js</b> en <code style="word-break:break-all">'+b+'libs/</code> y en <code style="word-break:break-all">'+b+'</code>. Súbelo (y <b>sql-wasm.wasm</b>) junto a index.html.</span>';
   });
 }
 
@@ -1160,9 +1176,21 @@ function wireEvents(){
 }
 
 /* ======================= Arranque ======================= */
+function fetchFirstJson(paths){
+  return new Promise(function(res,rej){
+    var i=0, lastErr=null;
+    (function next(){
+      if(i>=paths.length){rej(lastErr||new Error('no encontrado'));return;}
+      var p=paths[i++];
+      fetch(p).then(function(r){
+        if(r.ok){r.json().then(function(d){res(d);}).catch(function(e){lastErr=e;next();});}
+        else{lastErr=new Error('HTTP '+r.status+' en '+p);next();}
+      }).catch(function(e){lastErr=e;next();});
+    })();
+  });
+}
 function loadPrimaryJson(){
-  return fetch('data/RV1960.json').then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();})
-    .then(function(data){registerVersion(data);});
+  return fetchFirstJson(['data/RV1960.json','RV1960.json']).then(function(data){registerVersion(data);});
 }
 function boot(){
   loadState();
@@ -1174,7 +1202,8 @@ function boot(){
   idbOpen().then(idbAll).then(function(list){
     (list||[]).forEach(function(rec){ if(rec&&rec.data)registerVersion(rec.data); });
     return loadPrimaryJson().catch(function(err){
-      $('#loaderText').textContent='No se pudo cargar data/RV1960.json — súbelo a la carpeta data/. '+err.message;
+      var b=location.href.replace(/[^/]*$/,'');
+      $('#loaderText').innerHTML='No se pudo cargar la Biblia.<br>Busqué en <code style="color:var(--brass);word-break:break-all">'+b+'data/RV1960.json</code> y en <code style="color:var(--brass);word-break:break-all">'+b+'RV1960.json</code>.<br>Sube <b>RV1960.json</b> junto a index.html. ('+escAttr(err.message)+')';
       throw err;
     });
   }).then(function(){
