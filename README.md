@@ -48,6 +48,10 @@ Funciona tal cual, incluida la lectura de `.bblx` arrastrados.
 - **Apartados**: agrupa versículos por tema, misterio o estudio, con nota por apartado y
   **notas por versículo**.
 - **Análisis** de un término: total de apariciones, AT vs NT y distribución por libro.
+- **Números de Strong**: al cargar una versión con Strong (p. ej. «RV1960 con números Strong»),
+  aparece el botón **Strong** en la barra. Al activarlo se muestran los números junto a cada palabra;
+  al hacer clic se abre un cuadro con la **palabra hebrea/griega**, transliteración, pronunciación,
+  definición de Strong, uso y **análisis morfológico**, con enlace a todas sus apariciones.
 - **Temas de lectura** (papel / sepia / noche) y tamaño de letra.
 - **Exportar / importar** tu estudio completo (subrayados, notas y apartados) a un `.json`.
 
@@ -81,3 +85,17 @@ El texto de `Scripture` usa un marcado **RTF-lite**:
 | `\i … \i0` | cursiva (palabras añadidas por el traductor) |
 
 `parser.js` traduce ese marcado a HTML seguro separando los títulos del cuerpo del versículo.
+
+## Léxico de Strong
+
+El archivo `data/strongs.json` contiene el léxico hebreo y griego de Strong (14,197 entradas)
+que alimenta el cuadro emergente. Se carga **solo cuando se necesita** (al activar Strong o abrir
+una palabra), no en el arranque.
+
+Fuente: *Strong's Hebrew & Greek Dictionaries*, edición de **OpenScriptures**, licencia
+**CC-BY-SA**. Si publicas el sitio, conserva esta atribución.
+
+Nota: los módulos `.bblx` solo guardan los **números** de Strong y la morfología; la palabra
+original y su definición provienen de este léxico. La versión «RV1960 con números Strong» es
+grande (~15 MB en JSON), por eso conviene **cargarla arrastrando el `.bblx`** en la pestaña
+*Biblias* (se guarda en el navegador) en lugar de subirla al repositorio.
