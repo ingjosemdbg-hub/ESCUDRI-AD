@@ -124,6 +124,12 @@ La app carga las versiones que estén listadas en **`data/versions.json`** (el �
 2. Copia `data/MiBiblia.json` al repositorio y pega esa línea dentro de `"versions"`.
 3. Sube ambos cambios a GitHub. Listo.
 
+> **Nota sobre la versión con Strong incluida:** el módulo original de Strong no traía las
+> palabras de Cristo en rojo y tenía algunas palabras dañadas (p. ej. «Isr¿l» por «Israel»).
+> El archivo `data/RV1960S.json` que se incluye ya fue **corregido**: se le transfirió el rojo
+> desde la RV1960 base (alineando el texto) y se repararon esas palabras. Si regeneras ese JSON
+> desde el `.bblx`, vuelve a pasar `node merge_red.js` para reaplicar ambas cosas.
+
 > **Tamaño:** una versión **con Strong** pesa ~15 MB en JSON (~3 MB al servirse comprimida).
 > GitHub lo admite sin problema, pero no listes muchas Strong como principales a la vez.
 
