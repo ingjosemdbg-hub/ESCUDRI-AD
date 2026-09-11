@@ -99,3 +99,37 @@ Nota: los módulos `.bblx` solo guardan los **números** de Strong y la morfolog
 original y su definición provienen de este léxico. La versión «RV1960 con números Strong» es
 grande (~15 MB en JSON), por eso conviene **cargarla arrastrando el `.bblx`** en la pestaña
 *Biblias* (se guarda en el navegador) en lugar de subirla al repositorio.
+
+## Varias versiones dentro de la app
+
+La app carga las versiones que estén listadas en **`data/versions.json`** (el «manifiesto»):
+
+```json
+{
+  "primary": "RV1960",
+  "versions": [
+    { "id": "RV1960",  "name": "Reina-Valera 1960",                   "abbr": "RV 1960", "file": "data/RV1960.json",  "strong": false },
+    { "id": "RV1960S", "name": "Reina-Valera 1960 con números Strong", "abbr": "RV1960+", "file": "data/RV1960S.json", "strong": true }
+  ]
+}
+```
+
+- `primary` es la versión que se abre al inicio.
+- Solo la principal se descarga al arrancar; **las demás se cargan cuando las abres**
+  (al ponerlas como *Principal* o *Comparar*), para no descargar todo de golpe.
+
+### Añadir una versión nueva
+1. Convierte su módulo: `python3 convertir_bblx.py MiBiblia.bblx data/MiBiblia.json`
+   (detecta solo si trae Strong). El script imprime una **línea lista para pegar**.
+2. Copia `data/MiBiblia.json` al repositorio y pega esa línea dentro de `"versions"`.
+3. Sube ambos cambios a GitHub. Listo.
+
+> **Tamaño:** una versión **con Strong** pesa ~15 MB en JSON (~3 MB al servirse comprimida).
+> GitHub lo admite sin problema, pero no listes muchas Strong como principales a la vez.
+
+> **Derechos de autor:** si tu repositorio es **público**, recuerda que traducciones como
+> NVI, LBLA, NTV o DHH tienen copyright. Para publicar abiertamente conviene usar versiones
+> libres o de dominio público (p. ej. Reina-Valera 1909, RV Gómez). La RV1960 es © Sociedades
+> Bíblicas Unidas.
+
+## Léxico de Strong

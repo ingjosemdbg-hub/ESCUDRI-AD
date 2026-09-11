@@ -1,0 +1,7 @@
+{
+  "primary": "RV1960",
+  "versions": [
+    { "id": "RV1960",  "name": "Reina-Valera 1960",                         "abbr": "RV 1960", "file": "data/RV1960.json",  "strong": false },
+    { "id": "RV1960S", "name": "Reina-Valera 1960 con números Strong",       "abbr": "RV1960+", "file": "data/RV1960S.json", "strong": true }
+  ]
+}

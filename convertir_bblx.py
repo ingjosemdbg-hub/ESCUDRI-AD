@@ -64,6 +64,10 @@ def convert(path, out, short_id=None):
     print(f"OK  {name} [{abbr}] id={ident}")
     print(f"    libros={len(out_books)}  versículos={nverses}")
     print(f"    salida={out}  ({os.path.getsize(out)/1_048_576:.2f} MB)")
+    entry = ('    { "id": "%s", "name": "%s", "abbr": "%s", "file": "data/%s", "strong": %s }'
+             % (ident, name, abbr, os.path.basename(out), 'true' if d.get('strong', False) else 'false'))
+    print("\n    Para incluirla en la app, añade esta línea a data/versions.json (dentro de \"versions\"):")
+    print(entry)
 
 if __name__ == '__main__':
     if len(sys.argv) < 3:
