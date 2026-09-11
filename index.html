@@ -44,9 +44,21 @@ input,select,textarea{font-family:inherit; font-size:14px}
 #sidebar{
   width:var(--sb-w); flex:0 0 var(--sb-w); background:var(--board); color:var(--board-ink);
   display:flex; flex-direction:column; border-right:1px solid rgba(0,0,0,.35);
-  transition:margin-left .22s ease; z-index:40;
+  transition:margin-left .22s ease, width .22s ease, flex-basis .22s ease; z-index:40;
 }
 #main{flex:1 1 auto; display:flex; flex-direction:column; min-width:0}
+
+/* Pestaña para replegar/expandir el panel lateral (escritorio) */
+#sbToggle{
+  position:fixed; top:50%; transform:translateY(-50%); left:var(--sb-w); margin-left:-1px;
+  width:22px; height:64px; z-index:45; cursor:pointer;
+  border:1px solid rgba(0,0,0,.35); border-left:none; border-radius:0 9px 9px 0;
+  background:var(--board); color:var(--brass); font-family:var(--serif); font-size:16px; line-height:1;
+  display:flex; align-items:center; justify-content:center; padding:0;
+  box-shadow:3px 0 10px rgba(0,0,0,.16); transition:left .22s ease, background .15s, color .15s;
+}
+#sbToggle:hover{background:var(--brass); color:#fff}
+body.sb-collapsed #sbToggle{left:0}
 
 /* ---- Barra superior ---- */
 #topbar{
@@ -329,10 +341,15 @@ body.night .v.hl-lilac{background:rgba(211,193,232,.22)}
 .reading .empty{color:var(--sand)}
 
 /* Responsive */
+@media (min-width:861px){
+  body.sb-collapsed #sidebar{ width:0; flex-basis:0; overflow:hidden; border-right:none }
+  body.sb-collapsed .chnav.prev{ left:44px }
+}
 @media (max-width:860px){
   :root{--sb-w:290px}
   #sidebar{position:fixed; top:0; bottom:0; left:0; box-shadow:6px 0 24px rgba(0,0,0,.3)}
   body.nav-closed #sidebar{margin-left:calc(-1 * var(--sb-w))}
+  #sbToggle{display:none}
   .hamb{display:inline-flex}
   #topbar .brand .txt{display:none}
   #topSearch input{width:110px}
@@ -483,6 +500,7 @@ body.night .v.hl-lilac{background:rgba(211,193,232,.22)}
     <button class="chnav prev" id="chPrev" title="Capítulo anterior" aria-label="Capítulo anterior">‹</button>
     <button class="chnav next" id="chNext" title="Capítulo siguiente" aria-label="Capítulo siguiente">›</button>
   </div>
+  <button id="sbToggle" title="Replegar/expandir el panel" aria-label="Replegar o expandir el panel lateral">‹</button>
 </div>
 
 <!-- Barra de acción de versículo -->
@@ -655,7 +673,7 @@ var PRIMARY=null;           // id
 var COMPARE=[];             // ids adicionales
 var CUR={book:1, chapter:1};
 var STATE={
-  settings:{theme:'papel', redLetter:true, showXref:false, showStrong:false, fontStep:0},
+  settings:{theme:'papel', redLetter:true, showXref:false, showStrong:false, fontStep:0, sbCollapsed:false},
   highlights:{},            // "b.c.v" -> colorId
   notes:{},                 // "b.c.v" -> texto
   apartados:[]              // [{id,name,color,items:[{b,c,v}],note}]
@@ -771,6 +789,8 @@ function applyBodyClasses(){
   if(STATE.settings.theme==='sepia')document.body.classList.add('sepia');
   if(STATE.settings.theme==='noche')document.body.classList.add('night');
   document.body.classList.toggle('compare',COMPARE.length>0);
+  document.body.classList.toggle('sb-collapsed',!!STATE.settings.sbCollapsed);
+  var sbt=$('#sbToggle'); if(sbt){sbt.textContent=STATE.settings.sbCollapsed?'\u203A':'\u2039'; sbt.title=STATE.settings.sbCollapsed?'Mostrar el panel':'Ocultar el panel';}
   var base=19+STATE.settings.fontStep*1.5;
   document.documentElement.style.setProperty('--reading-size',base+'px');
 }
@@ -1397,6 +1417,7 @@ function wireEvents(){
   $('#strongBtn').onclick=function(){STATE.settings.showStrong=!STATE.settings.showStrong;this.classList.toggle('on',STATE.settings.showStrong);applyBodyClasses();saveState();if(STATE.settings.showStrong)loadStrongs();};
   $('#chPrev').onclick=function(){changeChapter(-1);};
   $('#chNext').onclick=function(){changeChapter(1);};
+  $('#sbToggle').onclick=function(){STATE.settings.sbCollapsed=!STATE.settings.sbCollapsed;applyBodyClasses();saveState();};
   document.addEventListener('keydown',function(e){
     if(e.altKey||e.ctrlKey||e.metaKey)return;
     var t=e.target, tag=t&&t.tagName;
