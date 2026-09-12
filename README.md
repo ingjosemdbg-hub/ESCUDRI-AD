@@ -139,3 +139,22 @@ La app carga las versiones que estén listadas en **`data/versions.json`** (el �
 > Bíblicas Unidas.
 
 ## Léxico de Strong
+## Instalar como aplicación (PWA)
+
+La app se puede instalar en el teléfono y abrir **a pantalla completa**, sin la barra
+del navegador, gracias a `manifest.webmanifest`, las etiquetas del `<head>` y el service
+worker `sw.js` (que además permite **usarla sin conexión** tras la primera visita).
+
+Archivos que deben estar junto a `index.html` en el repositorio:
+`manifest.webmanifest`, `sw.js`, `icon-192.png`, `icon-512.png`,
+`apple-touch-icon.png`, `favicon-32.png`.
+
+**Android (Chrome):** menú ⋮ → «Instalar aplicación» / «Agregar a pantalla principal».
+**iPhone (Safari):** botón Compartir → «Agregar a inicio». *(En iPhone debe hacerse desde
+Safari; Chrome en iOS no crea la PWA.)*
+
+Si ya habías agregado un acceso directo antes de estos cambios, **bórralo y vuelve a
+agregarlo** para que tome la configuración de pantalla completa y el ícono nuevo.
+
+Los íconos se generan con `make_icon.py` (requiere Pillow); ejecútalo si quieres
+regenerarlos o cambiar el diseño.

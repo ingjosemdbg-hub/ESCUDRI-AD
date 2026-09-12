@@ -4,6 +4,16 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Escudriñad — Estudio bíblico</title>
+<meta name="description" content="Lee, busca y escudriña las Escrituras. Funciona sin conexión.">
+<meta name="theme-color" content="#15302E">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Escudriñad">
+<meta name="application-name" content="Escudriñad">
 <style>
 /* ==========================================================================
    Escudriñad — edición de estudio. Sistema de diseño "rúbrica y oro":
@@ -65,6 +75,8 @@ body.sb-collapsed #sbToggle{left:0}
   display:flex; align-items:center; gap:10px; padding:9px 14px;
   background:var(--board-2); color:var(--board-ink); border-bottom:1px solid rgba(0,0,0,.35);
   flex-wrap:nowrap;
+  padding-top:calc(9px + env(safe-area-inset-top,0px));
+  padding-right:calc(14px + env(safe-area-inset-right,0px));
 }
 #topbar .brand{display:flex; align-items:center; gap:9px; font-family:var(--serif); font-size:19px; letter-spacing:.3px}
 #topbar .brand b{font-weight:600}
@@ -91,7 +103,7 @@ select.tb-sel{
 #topSearch input::placeholder{color:var(--board-soft)}
 
 /* ---- Sidebar: pestañas ---- */
-.tabs{display:flex; gap:2px; padding:8px 8px 0; background:var(--board)}
+.tabs{display:flex; gap:2px; padding:8px 8px 0; background:var(--board); padding-top:calc(8px + env(safe-area-inset-top,0px))}
 .tab{
   flex:1; text-align:center; padding:8px 4px; font-size:11.5px; letter-spacing:.4px; text-transform:uppercase;
   border:0; background:transparent; color:var(--board-soft); border-bottom:2px solid transparent;
@@ -271,6 +283,36 @@ body:not(.showstrong) .strong{display:none}
 .lex-row .lab{font-size:11px; letter-spacing:.5px; text-transform:uppercase; color:var(--sand); display:block; margin-bottom:1px}
 .lex-morph code{font-family:var(--mono); font-size:12px; background:var(--sel); padding:1px 5px; border-radius:4px}
 .pill.strong-pill{background:#3d6ea5; color:#fff; font-size:10px; padding:1px 6px; border-radius:20px; vertical-align:middle}
+
+/* Análisis mejorado */
+.ana-summary{background:var(--paper-2); border:1px solid var(--line-2); border-radius:12px; padding:14px; margin-bottom:14px; text-align:center}
+.ana-big{font-family:var(--serif); font-size:34px; color:var(--brass); line-height:1}
+.ana-sub{color:var(--ink-soft); font-size:13px; margin-top:2px}
+.ana-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:6px 14px; margin-top:12px; text-align:left}
+.ana-grid>div{display:flex; justify-content:space-between; border-bottom:1px dotted var(--line); padding:3px 0; font-size:13px}
+.ana-grid span{color:var(--sand)} .ana-grid b{color:var(--ink); font-family:var(--mono); font-size:12px}
+.ana-section{margin:16px 0}
+.ana-section h4{margin:0 0 8px; font-size:12px; letter-spacing:.6px; text-transform:uppercase; color:var(--sand)}
+.lex-note{font-size:12.5px; color:var(--ink-soft); margin:0 0 8px}
+.lexcard{border:1px solid var(--line-2); border-radius:10px; padding:11px 12px; margin-bottom:9px; background:var(--paper-2); transition:border-color .12s}
+.lexcard:hover{border-color:var(--brass)}
+.lexcard-h{display:flex; align-items:baseline; gap:9px; flex-wrap:wrap}
+.lexcard-h .lex-word{font-size:24px}
+.lexcard-count{margin-left:auto; font-family:var(--mono); font-size:15px; color:var(--brass); font-weight:600}
+.lexcard-count small{color:var(--sand); font-weight:400}
+.lexcard-def{font-size:13px; color:var(--ink-soft); margin-top:6px; line-height:1.45}
+.lexcard-morph{font-size:11.5px; color:var(--sand); font-family:var(--mono); margin-top:5px}
+.collocs{display:flex; flex-wrap:wrap; gap:6px}
+.colchip{border:1px solid var(--line-2); background:var(--paper-2); border-radius:20px; padding:4px 8px 4px 11px; font-size:13px; color:var(--ink); cursor:pointer; display:inline-flex; align-items:center; gap:6px}
+.colchip:hover{border-color:var(--brass); color:var(--brass)}
+.colchip span{font-family:var(--mono); font-size:11px; color:#fff; background:var(--sand); border-radius:20px; padding:0 6px; min-width:18px; text-align:center}
+.colchip:hover span{background:var(--brass)}
+.kwic{max-height:340px; overflow:auto; border:1px solid var(--line); border-radius:10px}
+.kwic-row{padding:8px 11px; border-bottom:1px solid var(--line); font-size:13.5px; cursor:pointer; line-height:1.5}
+.kwic-row:last-child{border-bottom:none}
+.kwic-row:hover{background:var(--sel)}
+.kwic .kref{font-family:var(--mono); font-size:11px; color:var(--brass); margin-right:6px; white-space:nowrap}
+.kwic .khit{color:var(--rubric); font-weight:700}
 
 /* Resaltados */
 .v.hl-amber{background:rgba(243,215,126,.55)} .v.hl-rose{background:rgba(242,184,198,.55)}
@@ -1038,30 +1080,186 @@ function goTo(b,c,v){
 }
 
 /* ======================= Análisis ======================= */
+// Mapea, en un versículo del módulo Strong, cada palabra -> el número Strong que la sigue.
+function hexCharA(hh){var n=parseInt(hh,16);var t={0xab:'«',0xbb:'»'};return t[n]||String.fromCharCode(n);}
+function strongWordMap(raw){
+  if(raw==null)return [];
+  var words=[], cur='';
+  function flush(){ if(cur.length){ words.push({disp:cur, w:normalize(cur), codes:[], morph:''}); cur=''; } }
+  function addText(t){ for(var k=0;k<t.length;k++){var ch=t[k];
+    if(/[\s.,;:!?«»"'()\[\]¿¡—–]/.test(ch)){ flush(); } else { cur+=ch; } } }
+  function assign(codes,morph){ flush(); if(words.length){var last=words[words.length-1]; if(!last.codes.length){last.codes=codes;last.morph=morph;}} }
+  function walk(str){var i=0,n=str.length;
+    while(i<n){var c=str[i];
+      if(c==='{'){var j=i,depth=0; for(;j<n;j++){if(str[j]==='{')depth++;else if(str[j]==='}'){depth--;if(depth===0){j++;break;}}}
+        var inner=str.slice(i+1,j-1);
+        if(/^\s*(\\cf\d+\s*)?\\super\s*[HG]\d/.test(inner)){
+          var st=inner.replace(/^\s*(\\cf\d+\s*)?\\super\s*/,'').replace(/[\t\r\n]+/g,'  ').trim();
+          var mm=/^((?:[HG]\d+ ?)+?)(?: {2,}([\s\S]*))?$/.exec(st);
+          var nums=mm?mm[1].trim().split(/\s+/):(/^[HG]\d/.test(st)?[st.split(/\s+/)[0]]:[]);
+          var morph=mm&&mm[2]?mm[2].trim().replace(/\s+/g,' '):'';
+          if(nums.length)assign(nums,morph);
+        } else if(/^\s*(\\cf\d+\s*)?\\super\b/.test(inner)){/* xref: {\super\cf6 (A)} */}
+        else if(/^\s*\\qc\b/.test(inner)){/* título */}
+        else { walk(inner); }   // contenedor (rojo {\cf6 …}, etc.): procesar su interior
+        i=j; continue;
+      }
+      if(c==='\\'){
+        var mh=/^\\'([0-9a-fA-F]{2})/.exec(str.slice(i)); if(mh){addText(hexCharA(mh[1]));i+=4;continue;}
+        var me=/^\\([\\{}])/.exec(str.slice(i)); if(me){addText(me[1]);i+=2;continue;}
+        var mc=/^\\([a-zA-Z]+)(-?\d+)?[ ]?/.exec(str.slice(i)); if(mc){if(mc[1]==='tab')addText(' ');i+=mc[0].length;continue;}
+        i++; continue;
+      }
+      var k2=i; while(k2<n && str[k2]!=='\\' && str[k2]!=='{' && str[k2]!=='}') k2++;
+      addText(str.slice(i,k2)); i=k2;
+    }
+  }
+  walk(String(raw)); flush(); return words;
+}
+function firstLoadedStrong(){
+  if(VER[PRIMARY]&&VER[PRIMARY].strong&&VER[PRIMARY].bimap)return PRIMARY;
+  if(VER['RV1960S']&&VER['RV1960S'].bimap&&VER['RV1960S'].strong)return 'RV1960S';
+  for(var id in VER){if(VER[id]&&VER[id].strong&&VER[id].bimap)return id;} return null;
+}
+function manifestStrongId(){ if(firstLoadedStrong())return null;
+  for(var id in VER){if(VER[id]&&VER[id].strong)return id;} return null; }
+
+var STOP={'el':1,'la':1,'los':1,'las':1,'de':1,'del':1,'y':1,'a':1,'en':1,'que':1,'e':1,'o':1,'u':1,'un':1,'una':1,'unos':1,'unas':1,'al':1,'se':1,'su':1,'sus':1,'lo':1,'le':1,'les':1,'me':1,'te':1,'nos':1,'con':1,'por':1,'para':1,'no':1,'si':1,'mi':1,'tu':1,'es':1,'son':1,'fue':1,'ha':1,'han':1,'como':1,'mas':1,'pero':1,'porque':1,'sino':1,'ni':1,'yo':1,'el':1,'ellos':1,'ella':1,'esto':1,'esta':1,'este':1,'aquel':1,'sobre':1,'entre':1,'desde':1,'hasta':1,'cuando':1,'donde':1,'quien':1,'cual':1,'toda':1,'todo':1,'todos':1,'todas':1};
+
 function runAnalysis(term,whole){
-  var id=PRIMARY; if(!VER[id]){toast('Carga una versión');return;}
-  term=term.trim(); if(!term){$('#anaResult').innerHTML='';return;}
-  var idx=buildPlainIndex(id);
+  var baseId=firstLoadedStrong()||PRIMARY;
+  if(!VER[baseId]){toast('Carga una versión');return;}
+  term=term.trim(); var wrap=$('#anaResult'); wrap.innerHTML='';
+  if(!term)return;
   var pt=normalize(term);
-  var perBook={}, perTest={AT:0,NT:0}, verses=0, total=0;
+  var idx=buildPlainIndex(baseId);
+  var perBook={}, perTest={AT:0,NT:0}, verses=0, total=0, hits=[], first=null, last=null;
   for(var i=0;i<idx.length;i++){var row=idx[i];var hay=normalize(row.t);
-    var cnt=countTerm(hay,pt,whole); if(cnt>0){verses++;total+=cnt;perBook[row.b]=(perBook[row.b]||0)+cnt;perTest[bookTest(row.b)]+=cnt;}}
-  var wrap=$('#anaResult'); wrap.innerHTML='';
+    var cnt=countTerm(hay,pt,whole);
+    if(cnt>0){verses++; total+=cnt; perBook[row.b]=(perBook[row.b]||0)+cnt; perTest[bookTest(row.b)]+=cnt;
+      hits.push(row); if(!first)first=row; last=row;}}
   if(total===0){wrap.innerHTML='<p class="empty">«'+escAttr(term)+'» no aparece.</p>';return;}
-  var head=document.createElement('div'); head.className='result-meta';
-  head.innerHTML='<b style="color:var(--brass);font-size:15px">'+total+'</b> apariciones · '+verses+' versículos<br>AT: '+perTest.AT+' · NT: '+perTest.NT;
+
+  // --- Resumen ---
+  var head=document.createElement('div'); head.className='ana-summary';
+  head.innerHTML='<div class="ana-big">'+total+'</div><div class="ana-sub">apariciones en '+verses+' versículos</div>'+
+    '<div class="ana-grid">'+
+      '<div><span>Antiguo T.</span><b>'+perTest.AT+'</b></div>'+
+      '<div><span>Nuevo T.</span><b>'+perTest.NT+'</b></div>'+
+      '<div><span>Libros</span><b>'+Object.keys(perBook).length+'</b></div>'+
+      '<div><span>Primera</span><b>'+bookAbbr(first.b)+' '+first.c+':'+first.v+'</b></div>'+
+      '<div><span>Última</span><b>'+bookAbbr(last.b)+' '+last.c+':'+last.v+'</b></div>'+
+    '</div>';
   wrap.appendChild(head);
-  var h4=document.createElement('h4'); h4.textContent='Por libro'; wrap.appendChild(h4);
+
+  // --- Léxico Strong (detrás del término) ---
+  var sid=firstLoadedStrong();
+  var lexBox=document.createElement('div'); lexBox.className='ana-section';
+  if(sid){
+    lexBox.innerHTML='<h4>Palabra original (Strong)</h4><div id="anaLex"><p class="empty">Analizando léxico…</p></div>';
+    wrap.appendChild(lexBox);
+    analyzeLexicon(sid, hits, pt, whole);
+  } else if(manifestStrongId()){
+    lexBox.innerHTML='<h4>Palabra original (Strong)</h4>';
+    var b=document.createElement('button'); b.className='btn ghost sm'; b.textContent='Cargar versión con Strong para el análisis léxico';
+    b.onclick=function(){var mid=manifestStrongId(); toast('Cargando…'); ensureVersionLoaded(mid).then(function(){runAnalysis(term,whole);});};
+    lexBox.appendChild(b); wrap.appendChild(lexBox);
+  }
+
+  // --- Distribución por libro ---
+  var distBox=document.createElement('div'); distBox.className='ana-section';
+  distBox.innerHTML='<h4>Distribución por libro</h4>';
   var books=Object.keys(perBook).map(Number).sort(function(a,b){return perBook[b]-perBook[a];});
   var mx=Math.max.apply(null,books.map(function(b){return perBook[b];}));
   var bars=document.createElement('div'); bars.className='bookbars';
   books.forEach(function(b){var row=document.createElement('div');row.className='bookbar';
     row.innerHTML='<div class="bn">'+bookName(b)+'</div><div class="track"><div class="fill" style="width:'+(perBook[b]/mx*100)+'%"></div></div><div class="cnt">'+perBook[b]+'</div>';
     row.style.cursor='pointer'; row.onclick=function(){goTo(b,1,1);}; bars.appendChild(row);});
-  wrap.appendChild(bars);
-  var btn=document.createElement('button'); btn.className='btn ghost sm'; btn.style.marginTop='10px'; btn.textContent='Ver concordancia en Buscar';
+  distBox.appendChild(bars); wrap.appendChild(distBox);
+
+  // --- Colocaciones ---
+  var col={};
+  for(var h=0;h<hits.length;h++){var toks=normalize(hits[h].t).split(/[^a-z0-9]+/);
+    for(var w=0;w<toks.length;w++){var tk=toks[w]; if(!tk||tk.length<3||STOP[tk]||tk===pt||(whole?false:tk.indexOf(pt)>=0))continue; col[tk]=(col[tk]||0)+1;}}
+  var colArr=Object.keys(col).map(function(k){return [k,col[k]];}).sort(function(a,b){return b[1]-a[1];}).slice(0,14);
+  if(colArr.length){var colBox=document.createElement('div'); colBox.className='ana-section';
+    colBox.innerHTML='<h4>Aparece junto a</h4>';
+    var chips=document.createElement('div'); chips.className='collocs';
+    colArr.forEach(function(p){var c=document.createElement('button'); c.className='colchip'; c.innerHTML=escAttr(p[0])+'<span>'+p[1]+'</span>';
+      c.onclick=function(){$('#anaTerm').value=p[0];runAnalysis(p[0],true);}; chips.appendChild(c);});
+    colBox.appendChild(chips); wrap.appendChild(colBox);}
+
+  // --- Contexto (concordancia) ---
+  var ctxBox=document.createElement('div'); ctxBox.className='ana-section';
+  ctxBox.innerHTML='<h4>Contexto ('+Math.min(hits.length,80)+' de '+verses+')</h4>';
+  var list=document.createElement('div'); list.className='kwic';
+  var re=new RegExp('('+pt.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')', whole?'gi':'gi');
+  hits.slice(0,80).forEach(function(row){var d=document.createElement('div'); d.className='kwic-row';
+    var plain=row.t; var hl=highlightTerm(plain, pt, whole);
+    d.innerHTML='<span class="kref">'+bookAbbr(row.b)+' '+row.c+':'+row.v+'</span> <span class="ktext">'+hl+'</span>';
+    d.onclick=function(){goTo(row.b,row.c,row.v);}; list.appendChild(d);});
+  ctxBox.appendChild(list); wrap.appendChild(ctxBox);
+
+  var btn=document.createElement('button'); btn.className='btn ghost sm'; btn.style.marginTop='6px'; btn.textContent='Ver en Buscar';
   btn.onclick=function(){switchTab('search');$('#qMain').value=term;$('#qWord').checked=whole;$('#qMode').value='all';$('#qScope').value='all';$('#doSearch').click();};
   wrap.appendChild(btn);
+}
+
+// Resalta el término (por palabra normalizada) dentro de un texto plano
+function highlightTerm(plain, pt, whole){
+  var out='', toks=plain.split(/(\s+)/);
+  for(var i=0;i<toks.length;i++){var t=toks[i];
+    if(/^\s+$/.test(t)){out+=t;continue;}
+    var n=normalize(t.replace(/[^\wáéíóúñü]/gi,''));
+    var m = whole? (n===pt) : (n.indexOf(pt)>=0);
+    out+= m ? ('<b class="khit">'+escAttr(t)+'</b>') : escAttr(t);
+  }
+  return out;
+}
+
+// Agrupa las apariciones por número Strong (palabra original detrás del término)
+function analyzeLexicon(sid, hits, pt, whole){
+  loadStrongs().then(function(dict){
+    var groups={}, withStrong=0, noStrong=0;
+    for(var h=0;h<hits.length;h++){var row=hits[h];
+      var raw=getVerseRaw(sid,row.b,row.c,row.v); if(!raw)continue;
+      var wm=strongWordMap(raw);
+      for(var i=0;i<wm.length;i++){var wd=wm[i];
+        var match = whole? (wd.w===pt) : (wd.w.indexOf(pt)>=0);
+        if(!match)continue;
+        if(wd.codes.length){ var key=wd.codes.join(' ');
+          if(!groups[key])groups[key]={codes:wd.codes,count:0,morphs:{},refs:[]};
+          groups[key].count++; if(wd.morph)groups[key].morphs[wd.morph]=(groups[key].morphs[wd.morph]||0)+1;
+          if(groups[key].refs.length<50)groups[key].refs.push(row);
+          withStrong++;
+        } else noStrong++;
+      }
+    }
+    var host=$('#anaLex'); if(!host)return;
+    var arr=Object.keys(groups).map(function(k){return groups[k];}).sort(function(a,b){return b.count-a.count;});
+    if(!arr.length){host.innerHTML='<p class="empty">No se hallaron números Strong asociados a «'+escAttr(pt)+'».</p>';return;}
+    var totalWS=withStrong||1;
+    var html='<p class="lex-note">La palabra que buscas traduce, en el original, estas palabras (por frecuencia):</p>';
+    arr.forEach(function(g){
+      var primary=g.codes[0], e=dict[primary]||{}, isGreek=primary[0]==='G';
+      var pct=Math.round(g.count/totalWS*100);
+      var morphTop=Object.keys(g.morphs).sort(function(a,b){return g.morphs[b]-g.morphs[a];})[0]||'';
+      html+='<div class="lexcard" data-codes="'+escAttr(g.codes.join(' '))+'">'+
+        '<div class="lexcard-h">'+
+          '<span class="lex-word'+(isGreek?'':' rtl')+'">'+escAttr(e.w||'—')+'</span>'+
+          '<span class="lex-code '+(isGreek?'gr':'')+'">'+escAttr(g.codes.join('+'))+'</span>'+
+          (e.x?'<span class="lex-translit">'+escAttr(e.x)+'</span>':'')+
+          '<span class="lexcard-count">'+g.count+' <small>('+pct+'%)</small></span>'+
+        '</div>'+
+        (e.d?'<div class="lexcard-def">'+escAttr(e.d)+'</div>':'')+
+        (morphTop?('<div class="lexcard-morph">'+escAttr(morphTop)+(describeMorph(morphTop,isGreek)?(' · '+describeMorph(morphTop,isGreek)):'')+'</div>'):'')+
+      '</div>';
+    });
+    if(noStrong)html+='<p class="lex-note" style="margin-top:8px">('+noStrong+' aparición(es) sin número Strong directo, p. ej. palabras añadidas.)</p>';
+    host.innerHTML=html;
+    $all('.lexcard',host).forEach(function(card){card.style.cursor='pointer';
+      card.onclick=function(){openStrongPopup(card.getAttribute('data-codes'),'');};});
+  }).catch(function(){var host=$('#anaLex'); if(host)host.innerHTML='<p class="empty">No se pudo cargar el léxico.</p>';});
 }
 
 /* ======================= Strong: léxico + morfología + cuadro ======================= */
@@ -1546,6 +1744,13 @@ function finishBoot(savedCmp){
     });
 }
 window.addEventListener('DOMContentLoaded',boot);
+
+/* PWA: registrar service worker para uso sin conexión */
+if('serviceWorker' in navigator){
+  window.addEventListener('load',function(){
+    navigator.serviceWorker.register('sw.js').catch(function(){/* sin conexión / entorno sin SW: ignora */});
+  });
+}
 </script>
 </body>
 </html>
