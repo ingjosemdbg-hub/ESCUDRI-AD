@@ -11,7 +11,7 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Escudriñad">
 <meta name="application-name" content="Escudriñad">
 <style>
@@ -381,16 +381,17 @@ body.night .v.hl-lilac{background:rgba(211,193,232,.22)}
 .reading .empty{color:var(--sand)}
 
 /* Responsive */
-/* Solo cuando la app está INSTALADA (abierta desde el ícono): reserva el
-   espacio de la barra de estado / isla del teléfono. No aplica en el navegador
-   ni en el escritorio, así que la vista en PC no cambia. */
+/* App INSTALADA: con la barra de estado opaca, iOS/Android ya reservan la
+   franja superior (incluida la isla) y colocan la app debajo. Solo cubrimos
+   los laterales por si giras el teléfono con la muesca a un costado. No aplica
+   en el navegador ni en escritorio, así que la vista de PC no cambia. */
 @media (display-mode: standalone), (display-mode: fullscreen){
   #topbar{
-    padding-top: calc(9px + max(env(safe-area-inset-top, 0px), 20px));
-    padding-right: calc(14px + env(safe-area-inset-right, 0px));
+    padding-top: calc(9px + env(safe-area-inset-top, 0px));
     padding-left: calc(14px + env(safe-area-inset-left, 0px));
+    padding-right: calc(14px + env(safe-area-inset-right, 0px));
   }
-  .tabs{ padding-top: calc(8px + max(env(safe-area-inset-top, 0px), 20px)); }
+  .tabs{ padding-top: calc(8px + env(safe-area-inset-top, 0px)); }
 }
 
 @media (min-width:861px){
