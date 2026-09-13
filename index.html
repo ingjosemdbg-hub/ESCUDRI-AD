@@ -217,6 +217,9 @@ select.tb-sel{
 .chnav.prev{left:16px} .chnav.next{right:16px}
 .chnav[disabled]{opacity:0; pointer-events:none}
 body.night .chnav{box-shadow:0 2px 10px rgba(0,0,0,.4)}
+
+/* Velo detrás del panel lateral en móvil: tocarlo lo cierra */
+#navScrim{position:fixed; inset:0; background:rgba(8,14,13,.46); z-index:39; opacity:0; pointer-events:none; transition:opacity .2s ease}
 @media(max-width:860px){ .chnav{width:40px; height:40px; font-size:22px; opacity:.7} .chnav.prev{left:6px} .chnav.next{right:6px} }
 .reading{max-width:760px; margin:0 auto; padding:26px 32px 120px}
 body.compare .reading{max-width:none}
@@ -402,6 +405,7 @@ body.night .v.hl-lilac{background:rgba(211,193,232,.22)}
   :root{--sb-w:290px}
   #sidebar{position:fixed; top:0; bottom:0; left:0; box-shadow:6px 0 24px rgba(0,0,0,.3)}
   body.nav-closed #sidebar{margin-left:calc(-1 * var(--sb-w))}
+  body:not(.nav-closed) #navScrim{opacity:1; pointer-events:auto}
   #sbToggle{display:none}
   .hamb{display:inline-flex}
   #topbar .brand .txt{display:none}
@@ -554,6 +558,7 @@ body.night .v.hl-lilac{background:rgba(211,193,232,.22)}
     <button class="chnav next" id="chNext" title="Capítulo siguiente" aria-label="Capítulo siguiente">›</button>
   </div>
   <button id="sbToggle" title="Replegar/expandir el panel" aria-label="Replegar o expandir el panel lateral">‹</button>
+  <div id="navScrim" aria-hidden="true"></div>
 </div>
 
 <!-- Barra de acción de versículo -->
@@ -1619,6 +1624,7 @@ function wireEvents(){
   $all('.tab').forEach(function(t){t.onclick=function(){switchTab(t.dataset.tab);};});
   $all('.testament-row button').forEach(function(b){b.onclick=function(){navTest=b.dataset.t;renderBookList();};});
   $('#hamb').onclick=function(){document.body.classList.toggle('nav-closed');};
+  $('#navScrim').onclick=function(){document.body.classList.add('nav-closed');};
 
   // Toggles superiores
   $('#redBtn').onclick=function(){STATE.settings.redLetter=!STATE.settings.redLetter;this.classList.toggle('on',STATE.settings.redLetter);applyBodyClasses();saveState();};
@@ -1711,6 +1717,7 @@ function boot(){
   loadState();
   wireEvents();
   applyBodyClasses();
+  if(window.innerWidth<=860)document.body.classList.add('nav-closed');
   $('#redBtn').classList.toggle('on',!!STATE.settings.redLetter);
   $('#xrefBtn').classList.toggle('on',!!STATE.settings.showXref);
 

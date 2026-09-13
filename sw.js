@@ -5,7 +5,7 @@
      primera vez que se usa (cache-first con respaldo de red).
    Así la app funciona sin conexión tras la primera visita, sin
      forzar la descarga de archivos grandes al instalar.               */
-var CACHE = 'escudrinad-v3';
+var CACHE = 'escudrinad-v4';
 var CORE = [
   './',
   'index.html',
